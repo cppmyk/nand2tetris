@@ -9,7 +9,7 @@
 static FILE* input_file = NULL;
 static FILE* output_file = NULL;
 
-/* parsing command line args */
+/* Parses command line args */
 static int process_args(int argc, char* argv[argc + 1]) {
   int opt;
 

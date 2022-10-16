@@ -4,6 +4,7 @@
 
 #define FIXED_INSTRUCTION_COUNT 23
 
+/* Init symbol table by predefined values */
 static void init_symbol_table(ht_hash_table_t* symbol_table) {
   // Registers
   ht_insert(symbol_table, "R0", 0);
@@ -35,9 +36,14 @@ static void init_symbol_table(ht_hash_table_t* symbol_table) {
   ht_insert(symbol_table, "THAT", 4);
 }
 
+/* 
+  Creates symbol table based on hash table.
+  Return NULL if could not allocate memory.
+*/
 ht_hash_table_t* create_symbol_table(size_t line_count) {
   size_t capacity = FIXED_INSTRUCTION_COUNT + line_count;
   ht_hash_table_t* symbol_table = ht_create_sized(capacity);
+  if (!symbol_table) return NULL;
   init_symbol_table(symbol_table);
 
   return symbol_table;

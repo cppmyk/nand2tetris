@@ -7,6 +7,7 @@
 static ssize_t program_counter = 0;
 static ssize_t free_register_number = 16;
 
+/* Removes spaces and new line characters from string */
 static void remove_spaces(char* str) {
   char* d = str;
   do {
@@ -17,6 +18,7 @@ static void remove_spaces(char* str) {
   } while ((*str++ = *d++));
 }
 
+/* Removes commnts starting with '//' from string */
 static void remove_comments(char* str) {
   size_t length = strlen(str);
   for (size_t i = 0; i < length; ++i) {
@@ -35,11 +37,13 @@ static void remove_comments(char* str) {
   }
 }
 
+/* Prepares assembler instruction to assembling */
 static void format_asm_instruction(char* asm_instruction) {
   remove_comments(asm_instruction);
   remove_spaces(asm_instruction);
 }
 
+/* Calculates if a string is a number */
 static bool is_number(const char* str) {
   if (str == NULL) return false;
 
@@ -49,6 +53,7 @@ static bool is_number(const char* str) {
   return true;
 }
 
+/* Creates C-instruction structure from formatted assembler instruction */
 struct CInstruction assemble_c_instruction(const char* asm_instruction) {
   assert(asm_instruction);
   struct CInstructionDest dest;
@@ -72,6 +77,7 @@ struct CInstruction assemble_c_instruction(const char* asm_instruction) {
   return instruction;
 }
 
+/* Creates A-instruction structure from formatted assembler instruction */
 struct AInstruction assemble_a_instruction(const char* asm_instruction,
                                            ht_hash_table_t* symbol_table) {
   struct AInstruction a_instruction;
@@ -104,7 +110,12 @@ struct AInstruction assemble_a_instruction(const char* asm_instruction,
   return a_instruction;
 }
 
-// -1 - incorrect instruction
+/* 
+  Parses assembler instruction and determines if it is a label or not.
+  Return  1 if it's correct instruction
+          0 if it's not a label
+         -1 if it's incorrect instruction
+*/
 static int is_label(const char* asm_instruction) {
   size_t instruction_size = strlen(asm_instruction);
 
@@ -153,7 +164,7 @@ void make_first_pass(FILE* input_f, ht_hash_table_t* symbol_table) {
   free(asm_instruction);
 }
 
-/* Assemble */
+/* Creates instructions and prints binary equivalent to the output file */
 void make_second_pass(FILE* input_f, FILE* output_f,
                       ht_hash_table_t* symbol_table) {
   rewind(input_f);
@@ -181,6 +192,7 @@ void make_second_pass(FILE* input_f, FILE* output_f,
   free(asm_instruction);
 }
 
+/* Counts the number of lines in a file */
 static size_t count_lines(FILE* file) {
   size_t buf_size = 65536;
   char line[buf_size];
@@ -196,6 +208,7 @@ static size_t count_lines(FILE* file) {
   return count;
 }
 
+/* Translates assembler instructions from input_f to binary code in output_f */
 void assemble(FILE* input_f, FILE* output_f) {
   assert(input_f);
   assert(output_f);

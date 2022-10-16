@@ -1,3 +1,4 @@
+/* Creating instruction structures from parsed assembler instruciton strings */
 #include "instructions.h"
 
 #include <stdbool.h>
@@ -5,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Converts decimal integer in A-instruction to binary form in struct field */
 static void convert_a_instruction_to_binary(struct AInstruction* instruction) {
   int value = instruction->value;
   int bits_count = 15;  // bits count
@@ -15,6 +17,7 @@ static void convert_a_instruction_to_binary(struct AInstruction* instruction) {
   instruction->binary_value[bits_count] = '\0';
 }
 
+/* Creates A-instruction from decimal integer value */
 struct AInstruction create_a_instruction(ht_value_t value) {
   struct AInstruction instruction;
   instruction.instruction_bit = '0';
@@ -23,6 +26,7 @@ struct AInstruction create_a_instruction(ht_value_t value) {
   return instruction;
 }
 
+/* Parsing Computation instruction to create enum object of computation type */
 static enum CompOperation parse_c_instruction_comp(
     const char* asm_comp_instruction) {
   if (strcmp(asm_comp_instruction, "0") == 0) {
@@ -87,12 +91,15 @@ static enum CompOperation parse_c_instruction_comp(
   exit(EXIT_FAILURE);
 }
 
+/* Fills a string with the values from another string */
 static void assign_str(char* array, char* value) {
   for (int i = 0; i < strlen(value); ++i) {
     array[i] = value[i];
   }
 }
 
+/* Converts Computation enum object in C-instruction to binary form in struct
+ * field */
 static void convert_c_comp_operation_to_binary(
     struct CInstructionComp* instruction_comp) {
   switch (instruction_comp->operation) {
@@ -187,6 +194,7 @@ static void convert_c_comp_operation_to_binary(
   instruction_comp->binary[7] = '\0';
 }
 
+/* Creates Computation part of C-instruction */
 struct CInstructionComp create_c_instruction_comp(
     const char* asm_comp_instruction) {
   struct CInstructionComp instruction_comp;
@@ -195,6 +203,8 @@ struct CInstructionComp create_c_instruction_comp(
   return instruction_comp;
 }
 
+/* Parsing formatted assembler instruction to create Jump part 
+ * of C-instruction */
 static struct CInstructionJump parse_c_instruction_jump(
     const char* asm_jump_instruction) {
   struct CInstructionJump instruction_jump;
@@ -240,6 +250,8 @@ static struct CInstructionJump parse_c_instruction_jump(
   return instruction_jump;
 }
 
+/* Converts Jump part in C-instruction to binary form in struct
+ * field */
 static void convert_c_jump_to_binary(
     struct CInstructionJump* instruction_jump) {
   instruction_jump->binary[0] = instruction_jump->lower ? '1' : '0';
@@ -247,6 +259,7 @@ static void convert_c_jump_to_binary(
   instruction_jump->binary[2] = instruction_jump->greater ? '1' : '0';
 }
 
+/* Creates Jump part of C-instruction */
 struct CInstructionJump create_c_instruction_jump(
     const char* asm_jump_instruction) {
   struct CInstructionJump instruction_jump =
@@ -256,6 +269,8 @@ struct CInstructionJump create_c_instruction_jump(
   return instruction_jump;
 }
 
+/* Parsing formatted assembler instruction to create Destination part 
+ * of C-instruction */
 static struct CInstructionDest parse_c_instruction_dest(
     const char* asm_dest_instruction) {
   struct CInstructionDest instruction_dest = {false};
@@ -280,6 +295,8 @@ static struct CInstructionDest parse_c_instruction_dest(
   return instruction_dest;
 }
 
+/* Converts Destination part in C-instruction to binary form in struct
+ * field */
 static void convert_c_dest_to_binary(
     struct CInstructionDest* instruction_dest) {
   instruction_dest->binary[0] = instruction_dest->a_register ? '1' : '0';
@@ -288,6 +305,7 @@ static void convert_c_dest_to_binary(
   instruction_dest->binary[3] = '\0';
 }
 
+/* Creates Destination part of C-instruction */
 struct CInstructionDest create_c_instruction_dest(
     const char* asm_dest_instruction) {
   struct CInstructionDest instruction_dest =
@@ -297,7 +315,8 @@ struct CInstructionDest create_c_instruction_dest(
   return instruction_dest;
 }
 
-struct CInstructionFixed create_c_instruction_fixed() {
+/* Creates Fixed part of C-instruction */
+static struct CInstructionFixed create_c_instruction_fixed() {
   struct CInstructionFixed instruction_fixed;
   instruction_fixed.binary[0] = '1';
   instruction_fixed.binary[1] = '1';
@@ -306,6 +325,7 @@ struct CInstructionFixed create_c_instruction_fixed() {
   return instruction_fixed;
 }
 
+/* Creates C-instruction from prepared parts (Comp, Dest, Jump) */
 struct CInstruction create_c_instruction(struct CInstructionComp comp,
                                          struct CInstructionDest dest,
                                          struct CInstructionJump jump) {
@@ -319,12 +339,14 @@ struct CInstruction create_c_instruction(struct CInstructionComp comp,
   return instruction;
 }
 
+/* Prints A-instrution in binary form to file */
 void fprint_a_instruction(FILE* stream,
                           const struct AInstruction* instruction) {
   fprintf(stream, "%c%s\n", instruction->instruction_bit,
           instruction->binary_value);
 }
 
+/* Prints C-instrution in binary form to file */
 void fprint_c_instruction(FILE* stream,
                           const struct CInstruction* instruction) {
   fprintf(stream, "%c%s%s%s%s\n", instruction->instruction_bit,

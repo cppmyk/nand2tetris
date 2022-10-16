@@ -1,8 +1,16 @@
+/* 
+  Implements parsing assembler instructions and separating
+  the required block from the instruction.
+*/
 #include "parser.h"
 
 #include <stdlib.h>
 #include <string.h>
 
+/* 
+  Searches for the first occurrence of a ch character in a string str.
+  Return -1 if there is no such character.
+*/
 static int get_char_pos(const char* str, char ch) {
   for (int i = 0; i < strlen(str); ++i) {
     if (str[i] == ch) return i;
@@ -10,6 +18,10 @@ static int get_char_pos(const char* str, char ch) {
   return -1;
 }
 
+/* 
+  Parses full assembler C-instruction and extracts Destination part from it.
+  Return Destination instruction part.
+*/
 char* divide_c_instruction_dest(const char* asm_instruction) {
   // check if dest exists
   ssize_t equals_pos = get_char_pos(asm_instruction, '=');
@@ -25,6 +37,10 @@ char* divide_c_instruction_dest(const char* asm_instruction) {
   return asm_dest_instruction;
 }
 
+/* 
+  Parses full assembler C-instruction and extracts Jump part from it.
+  Return Jump instruction part.
+*/
 char* divide_c_instruction_jump(const char* asm_instruction) {
   // check if jmp exists
   ssize_t semicolon_pos = get_char_pos(asm_instruction, ';');
@@ -46,6 +62,10 @@ char* divide_c_instruction_jump(const char* asm_instruction) {
   return asm_jump_instruction;
 }
 
+/* 
+  Parses full assembler C-instruction and extracts Computation part from it.
+  Return Computation instruction part.
+*/
 char* divide_c_instruction_comp(const char* asm_instruction) {
   ssize_t semicolon_pos = get_char_pos(asm_instruction, ';');
   ssize_t equals_pos = get_char_pos(asm_instruction, '=');
