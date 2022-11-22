@@ -18,7 +18,7 @@ static void remove_spaces(char* str) {
   } while ((*str++ = *d++));
 }
 
-/* Removes commnts starting with '//' from string */
+/* Removes comments starting with '//' from string */
 static void remove_comments(char* str) {
   size_t length = strlen(str);
   for (size_t i = 0; i < length; ++i) {
@@ -200,7 +200,7 @@ static size_t count_lines(FILE* file) {
 
   while (!feof(file)) {
     size_t res = fread(line, 1, buf_size, file);
-    for (int i = 0; i < res; ++i) {
+    for (size_t i = 0; i < res; ++i) {
       if (line[i] == '\n') ++count;
     }
   }
