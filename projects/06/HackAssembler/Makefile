@@ -11,6 +11,7 @@ $(TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $(TARGET)
 
 $(BUILD_DIR)/%.o : $(SRC_DIR)/%.c
+	mkdir -p $(BUILD_DIR)
 	$(CC) -c $< -o $@
 
 .PHONY: clean
